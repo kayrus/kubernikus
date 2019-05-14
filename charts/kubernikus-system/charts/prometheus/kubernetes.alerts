@@ -121,3 +121,17 @@ groups:
       summary: Volume attachments are failing for node
       description: The node {{ $labels.node }} is having continous problems attaching volumes. Maybe the node is suffering from an VMware internal lock and needs to be migrated to clear it.
 
+  - alert: VolumeAttachmentBadRequest
+    expr: increase(volume_mount_bad_request[5m])
+    for: 30m
+    labels:
+      tier: kks
+      service: node
+      severity: warning
+      context: pvc
+      meta: "Volume {{ $labels.volume }} fails to attach with bad request"
+      cloudops: "?searchTerm={{ $labels.volume }}&type=volume"
+    annotations:
+      summary: Volume attachment failing with bad request
+      description: The Volume {{ $labels.volume }} is having continous problems attaching. The "bad request" error returned by compute suggests there is an inconsitency between nova/cinder related to the attachment state. A nanny should fix this in the next hours. In urgent cases contact Thomas Graichen or Abhishek Kumar to fix this quicker.
+
